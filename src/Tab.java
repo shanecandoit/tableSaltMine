@@ -3,12 +3,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+
 import java.nio.charset.StandardCharsets;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -18,13 +20,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 
 
 /**
  *
- * @author s137p379
+ * @author shanecandoit
+ * Show a spreadsheet and perform basic calculations
+ * 
  */
 public class Tab extends javax.swing.JFrame {
 
@@ -32,17 +37,18 @@ public class Tab extends javax.swing.JFrame {
 	 * Creates new form Tab
 	 */
 	public Tab() {
-		style();
+		setupStyle();
 		initComponents();
-		popUps();
+		setupPopUpMenus();
 		
 		cells = new TreeMap();
 		lastHash="";
 		
+		// files are saved, load any previously existing from disk
 		loadLastFile();
 	}
 	
-	private String title = "Data flow editor";
+	private final String title = "Spreadsheet -> Data flow editor";
 	private Map<String, String> cells;
 	private String lastHash;
 
@@ -205,6 +211,7 @@ public class Tab extends javax.swing.JFrame {
 
 	/**
 	 * @param args the command line arguments
+	 * maybe open files, in future
 	 */
 	public static void main(String args[]) {
 		
@@ -231,11 +238,11 @@ public class Tab extends javax.swing.JFrame {
     private javax.swing.JTextPane jTextPane2;
     // End of variables declaration//GEN-END:variables
 
-	private void style() {
+	private void setupStyle() {
 		setTitle(title);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) {
+		} catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
 			Logger.getLogger(Tab.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -269,13 +276,10 @@ public class Tab extends javax.swing.JFrame {
 					continue;
 				}
 				
-				
 				//System.out.println(loc+" r"+r+" c"+header+" "+val);
-				
 				cells.put(loc, val);
 			}
 		}
-		
 		listCells();
 	}
 
@@ -306,46 +310,47 @@ public class Tab extends javax.swing.JFrame {
 				jTabbedPane1.setTitleAt(thisTab-1, lastHash);
 			}
 			
-			System.out.println("saving cells to:"+sha256);
+			//System.out.println("saving cells to:"+sha256);
 			String tempFile = System.getProperty("user.home") + File.separator + ".tabl";
 			PrintWriter writer = new PrintWriter(tempFile, "UTF-8");
 			writer.println(cellMap);
 			writer.print(sha256);
 			writer.close();
-			System.out.println("saved");
+			//System.out.println("saved");
 			
 		} catch (NoSuchAlgorithmException | FileNotFoundException | UnsupportedEncodingException ex) {
 			Logger.getLogger(Tab.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		
 		// deal with dependencies
-		Map<String, List<String>> deps = checkDependencies( cells );
+//		Map<String, List<String>> deps = checkDependencies( cells );
 		
 		// evaluate expressions
 		evalExpressions();
 		
-		//		merkle(cells);
+		//merkle(cells);
 	}
 	
 	
-	public static String hashTableLines(String tableLines){
-		try {
-			return hash(tableLines);
-		} catch (NoSuchAlgorithmException ex) {
-			Logger.getLogger(Tab.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return "";
-	}
+//	public static String hashTableLines(String tableLines){
+//		try {
+//			return hash(tableLines);
+//		} catch (NoSuchAlgorithmException ex) {
+//			Logger.getLogger(Tab.class.getName()).log(Level.SEVERE, null, ex);
+//		}
+//		return "";
+//	}
 	
 	
-/*
+	/*
 	merkle over the treemap
+	why do this?
 	*/
 //	private void merkle(Map<String, String> map) {
 //		System.out.println("map #"+map.size());
 //	}
 
-	private void popUps() {
+	private void setupPopUpMenus() {
 		
 		jTable1.setComponentPopupMenu(jPopupMenu1);
 	}
@@ -357,25 +362,20 @@ public class Tab extends javax.swing.JFrame {
 		return encoded;
 	}
 
-	private Map<String,List<String>> checkDependencies(Map<String, String> cells) {
-		
-		Map<String,List<String>> cellDependencies = new TreeMap();
-		
-		// k is an address, B2
-		for (String k: cells.keySet()) {
-			
-			String val = cells.get(k);
-			
-			if(val.startsWith("=")){
-				// this is an equation
-				
-				String[] vars = getVars( val );
-				
-				cellDependencies.put(k, list(vars));
-			}
-		}
-		return cellDependencies;
-	}
+//	private Map<String,List<String>> checkDependencies(Map<String, String> cells) {
+//		
+//		Map<String,List<String>> cellDependencies = new TreeMap();
+//		// k is an address, B2
+//		for (String k: cells.keySet()) {	
+//			String val = cells.get(k);
+//			if(val.startsWith("=")){
+//				// this is an equation
+//				String[] vars = getVariablesFromCellExpr( val );
+//				cellDependencies.put(k, list(vars));
+//			}
+//		}
+//		return cellDependencies;
+//	}
 	
 	public static String[] filterVars(String[] in){
 		String valid = "[a-zA-Z]+[0-9]+";
@@ -388,7 +388,7 @@ public class Tab extends javax.swing.JFrame {
 		return res.toArray( new String[res.size()] );
 	}
 	
-	public static String array(String[] in){
+	public static String array2string(String[] in){
 		String res="[";
 		for(String s:in){
 			res+=s+",";
@@ -436,7 +436,7 @@ public class Tab extends javax.swing.JFrame {
 	private void fromCellsToTable() {
 		for(String k:cells.keySet()){
 			
-			int col = colFromId(k);
+			int col = columnIntFromChar(k);
 			System.out.println("col = " + col);
 			
 //			String colAlpha = k.replaceAll("[0-9]", "");
@@ -560,13 +560,13 @@ public class Tab extends javax.swing.JFrame {
 			String val = cells.get(k);
 			if(val.startsWith("=")){
 				int row = rowFromId(k);
-				int col = colFromId(k);
+				int col = columnIntFromChar(k);
 				
 				String expr = val.replace("=", "");
 				System.out.println("expr = " + expr);
 				
 				//expr = a1+a2
-				String[] vars = getVars( val );
+				String[] vars = getVariablesFromCellExpr( val );
 				System.out.println("vars = " + vars);
 				for(String var:vars){
 					String sub = cells.get(var.toUpperCase());
@@ -584,7 +584,8 @@ public class Tab extends javax.swing.JFrame {
 		}
 	}
 
-	private int colFromId(String k) {
+	private int columnIntFromChar(String k) {
+		// A*->1, B*->2, AA*->27
 		String colAlpha = k.replaceAll("[0-9]", "");
 		int col = 0;
 		// this handles multiple letters: AA ??
@@ -601,18 +602,19 @@ public class Tab extends javax.swing.JFrame {
 	}
 
 	private int rowFromId(String k) {
+		// A1->1, C2->2
 		int row = Integer.parseInt( k.toUpperCase().replaceAll("[A-Z]", "") );
 		System.out.println("row = " + row);
 		return row;
 	}
 
-	private String[] getVars(String val) {
+	private String[] getVariablesFromCellExpr(String val) {
 		String[] parts = val.split("\\s+|(?=\\p{Punct})|(?<=\\p{Punct})");
-		System.out.println("parts = " + array(parts));
+		System.out.println("parts = " + array2string(parts));
 		//parts = [=,a1,+,a2,]
 
 		String[] validDeps = filterVars(parts);
-		System.out.println("validDeps = " + array(validDeps));
+		System.out.println("validDeps = " + array2string(validDeps));
 		//validDeps = [a1,a2,]
 		return validDeps;
 	}
