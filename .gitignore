@@ -22,6 +22,6 @@
 hs_err_pid*
 
 # has personal absolute paths
-nbproject/private/private.properties
+nbproject/private/*
 build/*
 
