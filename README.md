@@ -1,7 +1,6 @@
 # tableSaltMine
 
 ![screenshot showing 3 calculations](https://github.com/shanecandoit/tableSaltMine/blob/master/doc/sample1.png)
-![screenshot showing 3 calculations](https://github.com/shanecandoit/tableSaltMine/raw/master/doc/sample1.png)
 
 * perform basic calculations
   * using inline values
