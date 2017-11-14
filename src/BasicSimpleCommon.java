@@ -24,6 +24,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 		setTitle("Evaluation Map");
 		setupStyle();
 		initComponents();
+                jTextPaneInput.setText("1 + 2 * A + sin(6)");
 	}
 
 	/**
@@ -170,7 +171,6 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
                 "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
             }
         ));
-        jTable1.setEnabled(false);
         jScrollPane3.setViewportView(jTable1);
 
         jSplitPane2.setRightComponent(jScrollPane3);
@@ -245,10 +245,13 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 
 	private void evaluateText() {
 		
-		String input = jTextPaneInput.getText();
-		String output= evalBasic(input);
-		System.out.println("output = " + output);
-		jTextPaneOutput.setText(output);
+            String input = jTextPaneInput.getText();
+
+            prefixTable(input);
+
+            String output= evalBasic(input);
+            System.out.println("output = " + output);
+            jTextPaneOutput.setText(output);
 	}
 
 	// result of applying binary operator op to two operands val1 and val2
@@ -351,4 +354,36 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 		res+="]";
 		return res;
 	}
+
+    private void prefixTable(String input) {
+        
+        String tree = ParSnipIt.prefixToTree( ParSnipIt.infixToPrefixConvert(input, false) );
+        System.out.println("tree = " + tree);
+        int deep=0;
+        int down=0;
+        String buff="";
+        for(char ch:tree.toCharArray()){
+            System.out.println("ch = " + ch);
+            if(ch=='_'){
+                deep++;
+                buff="";
+            }
+            if(ch=='\n'){
+                down++;
+                // reset depth each row
+                deep=0;
+                buff="";
+            }
+            buff+=ch;
+            System.out.println("buff = " + buff);
+            if(buff!=null && buff.length()>1 && buff.startsWith("(")){
+                buff=buff.substring(1);
+            }
+            String put = buff.replaceAll("_", "");
+            System.out.println("put = " + put);
+            System.out.println("down = " + down);
+            System.out.println("deep = " + deep);
+            jTable1.setValueAt(put, down, deep);
+        }
+    }
 }
