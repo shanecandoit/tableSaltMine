@@ -362,9 +362,10 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
         int deep=0;
         int down=0;
         String buff="";
+		char indent='-';
         for(char ch:tree.toCharArray()){
             System.out.println("ch = " + ch);
-            if(ch=='_'){
+            if(ch==indent){
                 deep++;
                 buff="";
             }
@@ -379,7 +380,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
             if(buff!=null && buff.length()>1 && buff.startsWith("(")){
                 buff=buff.substring(1);
             }
-            String put = buff.replaceAll("_", "");
+            String put = buff.replaceAll(""+indent, "");
             System.out.println("put = " + put);
             System.out.println("down = " + down);
             System.out.println("deep = " + deep);
