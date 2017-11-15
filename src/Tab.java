@@ -1,4 +1,5 @@
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -59,8 +60,8 @@ public class Tab extends javax.swing.JFrame {
     private void initComponents() {
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItemInsertRow = new javax.swing.JMenuItem();
+        jMenuItemInsertColumn = new javax.swing.JMenuItem();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane2 = new javax.swing.JSplitPane();
@@ -71,20 +72,25 @@ public class Tab extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        jMenuItem1.setText("Insert Row");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemInsertRow.setText("Insert Row");
+        jMenuItemInsertRow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                jMenuItemInsertRowActionPerformed(evt);
             }
         });
-        jPopupMenu1.add(jMenuItem1);
+        jPopupMenu1.add(jMenuItemInsertRow);
 
-        jMenuItem2.setText("Insert Column");
-        jPopupMenu1.add(jMenuItem2);
+        jMenuItemInsertColumn.setText("Insert Column");
+        jMenuItemInsertColumn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemInsertColumnActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemInsertColumn);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jSplitPane1.setDividerLocation(200);
+        jSplitPane1.setDividerLocation(100);
 
         jSplitPane2.setDividerLocation(200);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -202,9 +208,27 @@ public class Tab extends javax.swing.JFrame {
 		tableUpdate();
     }//GEN-LAST:event_jTable1MouseReleased
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void jMenuItemInsertRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemInsertRowActionPerformed
 		// TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+		System.out.println("jMenuItemInsertRowActionPerformed");
+//		int x = jTable1.getMousePosition().x;
+//		int y = jTable1.getMousePosition().y;
+//		System.out.println("x+','+y = " + x+','+y);
+		int row = jTable1.getSelectedRow();
+//		int col = jTable1.getSelectedColumn();
+
+		tableInserRow(row);
+
+//		System.out.println("row+','+col = " + row + ',' + col);
+//		jTable1.getComponentAt(p).getName()
+
+    }//GEN-LAST:event_jMenuItemInsertRowActionPerformed
+
+    private void jMenuItemInsertColumnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemInsertColumnActionPerformed
+        // TODO add your handling code here:
+		System.out.println("jMenuItemInsertColumnActionPerformed");
+		System.out.println("evt.paramString() = " + evt);
+    }//GEN-LAST:event_jMenuItemInsertColumnActionPerformed
 
 	/**
 	 * @param args the command line arguments maybe open files, in future
@@ -220,8 +244,8 @@ public class Tab extends javax.swing.JFrame {
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItemInsertColumn;
+    private javax.swing.JMenuItem jMenuItemInsertRow;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -286,7 +310,7 @@ public class Tab extends javax.swing.JFrame {
 		for (String k : cells.keySet()) {
 			String val = cells.get(k);
 //			System.out.println("k"+k+" v"+val);
-			cellMap += k + "\t" + val + "\n";
+			cellMap += k + " " + val + "\n";
 		}
 
 		jTextPane1.setText(cellMap);
@@ -415,9 +439,9 @@ public class Tab extends javax.swing.JFrame {
 					// process the line.
 					System.out.println("line = " + line);
 
-					if (line.contains("\t")) {
-						String key = line.split("\t")[0];
-						String val = line.split("\t")[1];
+					if (line.contains(" ")) {
+						String key = line.split(" ")[0];
+						String val = line.split(" ")[1];
 						cells.put(key, val);
 					} else {
 						System.out.println("trash line = " + line);
@@ -606,7 +630,7 @@ public class Tab extends javax.swing.JFrame {
 
 				//expr = a1+a2
 				String[] vars = getVariablesFromCellExpr(val);
-				System.out.println("vars = " + vars);
+				System.out.println("vars = " + array2string(vars));
 				for (String var : vars) {
 					String sub = cells.get(var.toUpperCase());
 					System.out.println("sub = " + sub);
@@ -662,5 +686,12 @@ public class Tab extends javax.swing.JFrame {
 		// col 1 reserved for col numbers
 		// A1 is actually (0,2)
 		jTable1.setValueAt(val, row - 1, col + 1);
+	}
+
+	private void tableInserRow(int row) {
+
+		int rowCount = jTable1.getRowCount();
+		// insert
+		// shift later rows down
 	}
 }
