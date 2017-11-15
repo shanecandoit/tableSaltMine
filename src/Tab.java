@@ -42,7 +42,7 @@ public class Tab extends javax.swing.JFrame {
 
 		// files are saved, load any previously existing from disk
 		loadLastFile();
-		evalExpressions();
+		evalCellExpressions();
 	}
 
 	private final String title = "Spreadsheet -> Data flow editor";
@@ -296,7 +296,7 @@ public class Tab extends javax.swing.JFrame {
 			if (lastHash.equalsIgnoreCase(sha256)) {
 				// dont need to save, same as last time
 				// dont save but calculate some values
-				evalExpressions();
+				evalCellExpressions();
 				return;
 			} else {
 				lastHash = sha256;
@@ -320,7 +320,7 @@ public class Tab extends javax.swing.JFrame {
 		// deal with dependencies
 //		Map<String, List<String>> deps = checkDependencies( cells );
 		// evaluate expressions
-		evalExpressions();
+		evalCellExpressions();
 
 		//merkle(cells);
 	}
@@ -489,6 +489,7 @@ public class Tab extends javax.swing.JFrame {
 			double parse() {
 				nextChar();
 				double x = parseExpression();
+				//double x = parseExpressionSingle();
 				if (pos < str.length()) {
 					throw new RuntimeException("Unexpected: " + (char) ch);
 				}
@@ -512,6 +513,23 @@ public class Tab extends javax.swing.JFrame {
 					}
 				}
 			}
+			// TODO make this work
+//			double parseExpressionSingle() {
+//				System.out.println("parseExpressionSingle()");
+//				double x = parseTerm();
+//				System.out.println("x = " + x);
+//				do {
+//					if (eat('+')) {
+//						x += parseTerm(); // addition
+//					} else if (eat('-')) {
+//						x -= parseTerm(); // subtraction
+//					} else {
+//						return x;
+//					}
+//				} while (false);
+//				System.out.println("x = " + x);
+//				return x;
+//			}
 
 			double parseTerm() {
 				double x = parseFactor();
@@ -574,7 +592,7 @@ public class Tab extends javax.swing.JFrame {
 		}.parse();
 	}
 
-	private void evalExpressions() {
+	private void evalCellExpressions() {
 		System.out.println("evalExpressions");
 		for (String k : cells.keySet()) {
 
