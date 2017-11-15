@@ -42,6 +42,7 @@ public class Tab extends javax.swing.JFrame {
 
         // files are saved, load any previously existing from disk
         loadLastFile();
+        evalExpressions();
     }
 
     private final String title = "Spreadsheet -> Data flow editor";
@@ -348,6 +349,15 @@ public class Tab extends javax.swing.JFrame {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(locVals.getBytes(StandardCharsets.UTF_8));
         String encoded = Base64.getEncoder().encodeToString(hash);
+		
+		// make it url safe, https://en.wikipedia.org/wiki/Base64
+		// see URL and Filename Safe Alphabet
+		// + -> -, / -> _
+		//encoded = wrKcH/ufMlDgiRI18w2aCtvKjkns2nK+vdDvTxmL0G0=
+		encoded = encoded.replaceAll("[+]", "-").replaceAll("[/]", "_");
+		System.out.println("encoded = " + encoded);
+		//encoded = wrKcH_ufMlDgiRI18w2aCtvKjkns2nK-vdDvTxmL0G0=
+		
         return encoded;
     }
 
