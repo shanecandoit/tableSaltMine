@@ -1,5 +1,4 @@
 
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -181,9 +180,10 @@ public class Tab extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTable1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyReleased
-		// tab=9, enter=10
+		int tabKey = 9;
+		int enterKey = 10;
 		int key = evt.getKeyCode();
-		if (key == 9 || key == 10) {
+		if (key == tabKey || key == enterKey) {
 			tableUpdate();
 		}
     }//GEN-LAST:event_jTable1KeyReleased
@@ -209,7 +209,7 @@ public class Tab extends javax.swing.JFrame {
     }//GEN-LAST:event_jTable1MouseReleased
 
     private void jMenuItemInsertRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemInsertRowActionPerformed
-		// TODO add your handling code here:
+		
 		System.out.println("jMenuItemInsertRowActionPerformed");
 //		int x = jTable1.getMousePosition().x;
 //		int y = jTable1.getMousePosition().y;
@@ -691,6 +691,8 @@ public class Tab extends javax.swing.JFrame {
 	private void tableInserRow(int row) {
 
 		int rowCount = jTable1.getRowCount();
+		System.out.println("tableInsertRow("+row+") rowCount:"+rowCount);
+		// TODO
 		// insert
 		// shift later rows down
 	}
