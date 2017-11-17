@@ -1,15 +1,5 @@
 
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.Stack;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.UIManager;
-
-
 
 /**
  *
@@ -24,7 +14,12 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 		setTitle("Evaluation Map");
 		setupStyle();
 		initComponents();
-                jTextPaneInput.setText("1 + 2 * A + sin(6)");
+		jTextPaneInput.setText("1 + 2 * A + sin(6)");
+
+		// setup slider and label
+		jSliderTimeline.setMaximum(10);
+		jSliderTimeline.setValue(0);
+		jLabelTimer.setText("# 0");
 	}
 
 	/**
@@ -42,7 +37,15 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
         jTextPaneInput = new javax.swing.JTextPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jButtonBegin = new javax.swing.JButton();
+        jSliderTimeline = new javax.swing.JSlider();
+        jButtonPrevious = new javax.swing.JButton();
+        jButtonEnd = new javax.swing.JButton();
+        jButtonNext = new javax.swing.JButton();
+        jLabelTimer = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
         jTextPaneOutput = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -177,10 +180,87 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 
         jSplitPane1.setTopComponent(jSplitPane2);
 
-        jTextPaneOutput.setFont(new java.awt.Font("Consolas", 0, 11)); // NOI18N
-        jScrollPane2.setViewportView(jTextPaneOutput);
+        jButtonBegin.setText("|<");
+        jButtonBegin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBeginActionPerformed(evt);
+            }
+        });
 
-        jSplitPane1.setRightComponent(jScrollPane2);
+        jButtonPrevious.setText("<");
+        jButtonPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPreviousActionPerformed(evt);
+            }
+        });
+
+        jButtonEnd.setText(">|");
+        jButtonEnd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEndActionPerformed(evt);
+            }
+        });
+
+        jButtonNext.setText(">");
+        jButtonNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNextActionPerformed(evt);
+            }
+        });
+
+        jLabelTimer.setText("# ");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jButtonBegin)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonPrevious)
+                .addGap(18, 18, 18)
+                .addComponent(jSliderTimeline, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabelTimer, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonNext)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonEnd))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jButtonBegin)
+                .addComponent(jButtonPrevious))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jButtonEnd)
+                .addComponent(jButtonNext)
+                .addComponent(jLabelTimer))
+            .addComponent(jSliderTimeline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jScrollPane4.setViewportView(jTextPaneOutput);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+        );
+
+        jSplitPane1.setRightComponent(jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -188,7 +268,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE)
+                .addComponent(jSplitPane1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -211,6 +291,53 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 				
     }//GEN-LAST:event_jTextPaneInputKeyReleased
 
+    private void jButtonBeginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBeginActionPerformed
+        // TODO add your handling code here:
+		System.out.println("jButtonBeginActionPerformed BEGIN");
+		int begin = jSliderTimeline.getMinimum();
+		jSliderTimeline.setValue(begin);
+
+		String time = "# "+begin;
+		jLabelTimer.setText(time);
+    }//GEN-LAST:event_jButtonBeginActionPerformed
+
+    private void jButtonPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPreviousActionPerformed
+        // TODO add your handling code here:
+		System.out.println("jButtonPreviousActionPerformed PREVIOUS");
+		
+		int prev = jSliderTimeline.getValue()-1;
+		if (prev >= jSliderTimeline.getMinimum()) {
+			jSliderTimeline.setValue(prev);
+
+
+			String time = "# "+prev;
+			jLabelTimer.setText(time);
+		}
+    }//GEN-LAST:event_jButtonPreviousActionPerformed
+
+    private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
+        // TODO add your handling code here:
+		System.out.println("jButtonNextActionPerformed NEXT");
+
+		int next = jSliderTimeline.getValue()+1;
+		if (next <= jSliderTimeline.getMaximum()) {
+			jSliderTimeline.setValue(next);
+
+			String time = "# "+next;
+			jLabelTimer.setText(time);
+		}
+    }//GEN-LAST:event_jButtonNextActionPerformed
+
+    private void jButtonEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEndActionPerformed
+        // TODO add your handling code here:
+		System.out.println("jButtonEndActionPerformed END");
+		int end=jSliderTimeline.getMaximum();
+		jSliderTimeline.setValue(end);
+
+		String time = "# " + end;
+		jLabelTimer.setText(time);
+    }//GEN-LAST:event_jButtonEndActionPerformed
+
 	/**
 	 * @param args the command line arguments
 	 */
@@ -225,9 +352,17 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonBegin;
+    private javax.swing.JButton jButtonEnd;
+    private javax.swing.JButton jButtonNext;
+    private javax.swing.JButton jButtonPrevious;
+    private javax.swing.JLabel jLabelTimer;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSlider jSliderTimeline;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTable jTable1;
@@ -238,7 +373,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 	private void setupStyle() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) {
+		} catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
 			Logger.getLogger(BasicSimpleCommon.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
