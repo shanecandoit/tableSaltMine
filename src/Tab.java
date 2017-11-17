@@ -12,6 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,8 @@ public class Tab extends javax.swing.JFrame {
 		setupPopUpMenus();
 
 		cells = new TreeMap();
+
+		// if there is a change with lastHash then overwrite old file
 		lastHash = "";
 
 		// files are saved, load any previously existing from disk
@@ -48,6 +51,7 @@ public class Tab extends javax.swing.JFrame {
 	private final String title = "Spreadsheet -> Data flow editor";
 	private Map<String, String> cells;
 	private String lastHash;
+	private final String fileExtension = ".tabl";
 
 	/**
 	 * This method is called from within the constructor to initialize the form.
@@ -217,7 +221,7 @@ public class Tab extends javax.swing.JFrame {
 		int row = jTable1.getSelectedRow();
 //		int col = jTable1.getSelectedColumn();
 
-		tableInserRow(row);
+		tableInsertRow(row);
 
 //		System.out.println("row+','+col = " + row + ',' + col);
 //		jTable1.getComponentAt(p).getName()
@@ -237,6 +241,7 @@ public class Tab extends javax.swing.JFrame {
 
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				new Tab().setVisible(true);
 			}
@@ -330,12 +335,12 @@ public class Tab extends javax.swing.JFrame {
 			}
 
 			//System.out.println("saving cells to:"+sha256);
-			String tempFile = System.getProperty("user.home") + File.separator + ".tabl";
-			PrintWriter writer = new PrintWriter(tempFile, "UTF-8");
-			writer.println(cellMap);
-			writer.print(sha256);
-			writer.close();
-			//System.out.println("saved");
+			String tempFile = System.getProperty("user.home") + File.separator + fileExtension;
+			try (PrintWriter writer = new PrintWriter(tempFile, "UTF-8")) {
+				writer.println(cellMap);
+				writer.print(sha256);
+				//System.out.println("saved");
+			}
 
 		} catch (NoSuchAlgorithmException | FileNotFoundException | UnsupportedEncodingException ex) {
 			Logger.getLogger(Tab.class.getName()).log(Level.SEVERE, null, ex);
@@ -369,6 +374,12 @@ public class Tab extends javax.swing.JFrame {
 		jTable1.setComponentPopupMenu(jPopupMenu1);
 	}
 
+	/**
+	 *
+	 * @param locVals A string that lists all non-empty cells and their contents
+	 * @return urlSafe( base64Encode( locVals ))
+	 * @throws NoSuchAlgorithmException
+	 */
 	private static String hash(String locVals) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-256");
 		byte[] hash = digest.digest(locVals.getBytes(StandardCharsets.UTF_8));
@@ -399,9 +410,16 @@ public class Tab extends javax.swing.JFrame {
 //		}
 //		return cellDependencies;
 //	}
+
+	/**
+	 *
+	 * @param in array of string tokens from cell expression
+	 * @return only those tokens that reference other cells
+	 * [=,a1,+,a2,] -> [a1,a2]
+	 */
 	public static String[] filterVars(String[] in) {
 		String valid = "[a-zA-Z]+[0-9]+";
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		for (String s : in) {
 			if (s.matches(valid)) {
 				res.add(s);
@@ -421,9 +439,7 @@ public class Tab extends javax.swing.JFrame {
 
 	public static List<String> list(String[] in) {
 		List<String> res = new ArrayList();
-		for (String s : in) {
-			res.add(s);
-		}
+		res.addAll(Arrays.asList(in));
 		return res;
 	}
 
@@ -459,7 +475,7 @@ public class Tab extends javax.swing.JFrame {
 	private void fromCellsToTable() {
 		for (String k : cells.keySet()) {
 
-			int col = columnIntFromChar(k);
+			int col = columnIntFromAddress(k);
 			System.out.println("col = " + col);
 
 //			String colAlpha = k.replaceAll("[0-9]", "");
@@ -475,7 +491,7 @@ public class Tab extends javax.swing.JFrame {
 //			col/=10;
 //			System.out.println("col = " + col);
 //			int row = Integer.parseInt( k.toUpperCase().replaceAll("[A-Z]", "") );
-			int row = rowFromId(k);
+			int row = rowIntFromAddress(k);
 			System.out.println("row = " + row);
 
 			String val = cells.get(k);
@@ -537,23 +553,6 @@ public class Tab extends javax.swing.JFrame {
 					}
 				}
 			}
-			// TODO make this work
-//			double parseExpressionSingle() {
-//				System.out.println("parseExpressionSingle()");
-//				double x = parseTerm();
-//				System.out.println("x = " + x);
-//				do {
-//					if (eat('+')) {
-//						x += parseTerm(); // addition
-//					} else if (eat('-')) {
-//						x -= parseTerm(); // subtraction
-//					} else {
-//						return x;
-//					}
-//				} while (false);
-//				System.out.println("x = " + x);
-//				return x;
-//			}
 
 			double parseTerm() {
 				double x = parseFactor();
@@ -602,6 +601,9 @@ public class Tab extends javax.swing.JFrame {
 					} else if (func.equals("tan")) {
 						x = Math.tan(Math.toRadians(x));
 					} else {
+						// TODO: prompt to create the as-yet unknown function
+						// would you like to create this previously unknow function
+						// using the passed in arguments as a test-case sample input?
 						throw new RuntimeException("Unknown function: " + func);
 					}
 				} else {
@@ -616,39 +618,53 @@ public class Tab extends javax.swing.JFrame {
 		}.parse();
 	}
 
+	/**
+	 * Get result of expression from cell
+	 * This will be shown in the table, not
+	 * saved to file, or to a separate data structure.
+	 * Read cells, write JTable.
+	 *
+	 * Right now, does all cells, not just "dirty" ones.
+	 */
 	private void evalCellExpressions() {
-		System.out.println("evalExpressions");
+//		System.out.println("evalExpressions");
 		for (String k : cells.keySet()) {
 
 			String val = cells.get(k);
 			if (val.startsWith("=")) {
-				int row = rowFromId(k);
-				int col = columnIntFromChar(k);
+				int row = rowIntFromAddress(k);
+				int col = columnIntFromAddress(k);
 
 				String expr = val.replace("=", "");
-				System.out.println("expr = " + expr);
+//				System.out.println("expr = " + expr);
 
 				//expr = a1+a2
 				String[] vars = getVariablesFromCellExpr(val);
-				System.out.println("vars = " + array2string(vars));
+//				System.out.println("vars = " + array2string(vars));
 				for (String var : vars) {
 					String sub = cells.get(var.toUpperCase());
-					System.out.println("sub = " + sub);
+//					System.out.println("sub = " + sub);
 
 					expr = expr.replaceAll(var, sub);
-					System.out.println("expr = " + expr);
+//					System.out.println("expr = " + expr);
 				}
 
 				double ans = eval(expr);
-				System.out.println("ans = " + ans);
+//				System.out.println("ans = " + ans);
 
 				putCell("" + ans, row, col);
 			}
 		}
 	}
 
-	private int columnIntFromChar(String k) {
-		// A*->1, B*->2, AA*->27
+	/**
+	 * Get int index of col from an Address like A2
+	 * remove the number part and map chars to an int
+	 *
+	 * @param k an address like A2 or C5
+	 * @return int offset. A5->1, B9->2, AA3->27
+	 */
+	private int columnIntFromAddress(String k) {
 		String colAlpha = k.replaceAll("[0-9]", "");
 		int col = 0;
 		// this handles multiple letters: AA ??
@@ -660,40 +676,59 @@ public class Tab extends javax.swing.JFrame {
 			col *= 10;
 		}
 		col /= 10;
-		System.out.println("col = " + col);
+//		System.out.println("col = " + col);
 		return col;
 	}
 
-	private int rowFromId(String k) {
-		// A1->1, C2->2
+	/**
+	 * Get int index of row from an Address like A2
+	 * just remove the letter part
+	 *
+	 * @param k an address like A2 or C5
+	 * @return int offset. A1->1, C2->2
+	 */
+	private int rowIntFromAddress(String k) {
 		int row = Integer.parseInt(k.toUpperCase().replaceAll("[A-Z]", ""));
-		System.out.println("row = " + row);
+//		System.out.println("row = " + row);
 		return row;
 	}
 
+	/**
+	 * Get dependencies in an expression as found in cells
+	 * 
+	 * @param val an expression like "=A1+A2"
+	 * @return a list of address like ["A1","A2"]
+	 */
 	private String[] getVariablesFromCellExpr(String val) {
 		String[] parts = val.split("\\s+|(?=\\p{Punct})|(?<=\\p{Punct})");
-		System.out.println("parts = " + array2string(parts));
+//		System.out.println("parts = " + array2string(parts));
 		//parts = [=,a1,+,a2,]
 
 		String[] validDeps = filterVars(parts);
-		System.out.println("validDeps = " + array2string(validDeps));
+//		System.out.println("validDeps = " + array2string(validDeps));
 		//validDeps = [a1,a2,]
 		return validDeps;
 	}
 
+	/**
+	 * Put a String in a table cell
+	 * @param val the string to put in the cell
+	 * @param row y-axis up-down ie: A2 is row(1)=0
+	 * @param col x-axis left-right ie: A2 is col(A)=1 col[0] is for row#
+	 */
 	private void putCell(String val, int row, int col) {
 		// col 1 reserved for col numbers
 		// A1 is actually (0,2)
 		jTable1.setValueAt(val, row - 1, col + 1);
 	}
 
-	private void tableInserRow(int row) {
+	private void tableInsertRow(int row) {
 
 		int rowCount = jTable1.getRowCount();
 		System.out.println("tableInsertRow("+row+") rowCount:"+rowCount);
 		// TODO
 		// insert
 		// shift later rows down
+		// fix dependencies
 	}
 }
