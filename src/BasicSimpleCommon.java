@@ -246,6 +246,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 	private void evaluateText() {
 		
             String input = jTextPaneInput.getText();
+			System.out.println("input = " + input);
 
             prefixTable(input);
 
@@ -356,7 +357,9 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 	}
 
     private void prefixTable(String input) {
-        
+
+		String inline = ParSnipIt.infixToPrefixConvert(input, false);
+		System.out.println("inline = " + inline);
         String tree = ParSnipIt.prefixToTree( ParSnipIt.infixToPrefixConvert(input, false) );
         System.out.println("tree = " + tree);
         int deep=0;
