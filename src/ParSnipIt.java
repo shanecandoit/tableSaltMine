@@ -88,6 +88,12 @@ public class ParSnipIt {
         }
     }
 
+    /**
+     * Convert an infix expression to a prefix expression
+     * @param infix the complex infix expression
+     * @param reduce whether to reduce/evaluate or not
+     * @return a prefix expression, or an answer if reduce
+     */
     public static String infixToPrefixConvert(String infix, boolean reduce) {
         Stack<String> operandStack = new  Stack<String>();
         Stack<String> operatorStack = new Stack<String>();
@@ -122,15 +128,13 @@ public class ParSnipIt {
     }
 
     public static String eval(String infix, boolean reduce) {
-        Stack<String> operandStack = new Stack<String>();
-        Stack<String> operatorStack = new Stack<String>();
+        Stack<String> operandStack = new Stack<>();
+        Stack<String> operatorStack = new Stack<>();
 
         StringTokenizer tokenizer = new StringTokenizer(infix);
-        String lastOperand = "";
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
 //			System.out.println("token = " + token);
-            lastOperand = token;
             if (isOperand(token)) {
                 operandStack.push(token);
             } else if (token.equals("(") || operatorStack.isEmpty()
@@ -235,35 +239,14 @@ public class ParSnipIt {
             return ""+res;
         }
     }
-    /*
     
-tree = 
-(+
--(+
---1
---(*
----2
----A))
--sin(6))
+    /**
+     * Get a step-by-step list of expressions
+     * Evaluate and show your work
+     * @param expression A string containing a complex expression
+     * @return a list of smaller and smaller expressions, 
+     * ending with a single number
      */
-    private static String a2s(Object[] toArray) {
-        String out = "[";
-        for (Object o : toArray) {
-            out += o + ",";
-        }
-        out += "]";
-        return out;
-    }
-
-    private static String a2sNoArrayNotation(Object[] toArray) {
-        String out = "";
-        for (Object o : toArray) {
-            out += o + " ";
-        }
-        //out+="";
-        return out;
-    }
-    
     public static List<String> evalExpressionList(String expression){
         
         List<String> evalSteps = new ArrayList();
