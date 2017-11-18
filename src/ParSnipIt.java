@@ -166,7 +166,7 @@ public class ParSnipIt {
         //pre = (+ (+ 1 (* 2 3)) sin(6))
 
         String indent = "-";
-        String out = "\n";
+        String out = "";
         int deep = 0;
         for (char ch : pre.toCharArray()) {
             if (ch == '(') {
