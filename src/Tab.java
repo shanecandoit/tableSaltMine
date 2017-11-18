@@ -380,20 +380,29 @@ public class Tab extends javax.swing.JFrame {
 	 * @return urlSafe( base64Encode( locVals ))
 	 * @throws NoSuchAlgorithmException
 	 */
-	private static String hash(String locVals) throws NoSuchAlgorithmException {
-		MessageDigest digest = MessageDigest.getInstance("SHA-256");
-		byte[] hash = digest.digest(locVals.getBytes(StandardCharsets.UTF_8));
-		String encoded = Base64.getEncoder().encodeToString(hash);
+	private static String hash(String locVals) {
+		try{
+            MessageDigest digest = MessageDigest
+                    .getInstance("SHA-256");
+            byte[] hash = digest.digest(locVals.getBytes(StandardCharsets.UTF_8));
+            String encoded = Base64.getEncoder().encodeToString(hash);
 
-		// make it url safe, https://en.wikipedia.org/wiki/Base64
-		// see URL and Filename Safe Alphabet
-		// + -> -, / -> _
-		//encoded = wrKcH/ufMlDgiRI18w2aCtvKjkns2nK+vdDvTxmL0G0=
-		encoded = encoded.replaceAll("[+]", "-").replaceAll("[/]", "_");
-		System.out.println("encoded = " + encoded);
-		//encoded = wrKcH_ufMlDgiRI18w2aCtvKjkns2nK-vdDvTxmL0G0=
-
-		return encoded;
+            // make it url safe, https://en.wikipedia.org/wiki/Base64
+            // see URL and Filename Safe Alphabet
+            // + -> -, / -> _, = -> ""
+            //encoded = wrKcH/ufMlDgiRI18w2aCtvKjkns2nK+vdDvTxmL0G0=
+            encoded = encoded.replaceAll("[+]", "-")
+                    .replaceAll("[/]", "_")
+                    .replaceFirst("=", "");
+            System.out.println("encoded = " + encoded);
+            //encoded = wrKcH_ufMlDgiRI18w2aCtvKjkns2nK-vdDvTxmL0G0=
+            // remove only one equals is ok
+            //https://stackoverflow.com/questions/9020409/is-it-ok-to-remove-the-equal-signs-from-a-base64-string
+            return encoded;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
 	}
 
 //	private Map<String,List<String>> checkDependencies(Map<String, String> cells) {
