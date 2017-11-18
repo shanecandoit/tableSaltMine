@@ -450,11 +450,17 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
                 output+=step+"\n";
             }
             jTextPaneOutput.setText(output);
+            highlightLine(0);
             
             // setup timeline
             int stepSize = steps.size();
-            System.out.println("stepSize = " + stepSize);
-            jSliderTimeline.setMaximum( stepSize );
+//            System.out.println("stepSize = " + stepSize);
+//            System.out.println("steps:");
+//            for(String step:steps){
+//                System.out.println("-step = " + step);
+//            }
+            // minus 1 so we dont overshoot on timeline and get AWT errors
+            jSliderTimeline.setMaximum( stepSize-1 );
 
             // show prefixTable of input
             infixTable(input);
@@ -566,17 +572,17 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 		return res;
 	}
 
-    private void prefixTable(String input) {
-
-		String inline = ParSnipIt.infixToPrefixConvert(input, false);
+    private void prefixTable(String prefix) {
+        System.out.println("prefixTable(String prefix) prefix = " + prefix);
+//		String inline = ParSnipIt.infixToPrefixConvert(input, false);
 //		System.out.println("inline = " + inline);
-        String tree = ParSnipIt.prefixToTree( ParSnipIt.infixToPrefixConvert(input, false) );
-//        System.out.println("tree = " + tree);
+        String tree = ParSnipIt.prefixToTree( prefix );
+        System.out.println("tree = " + tree);
         int deep=0;
         int down=0;
         String buff="";
 		char indent='-';
-        for(char ch:tree.toCharArray()){
+        for(char ch:prefix.toCharArray()){
 //            System.out.println("ch = " + ch);
             if(ch==indent){
                 deep++;
