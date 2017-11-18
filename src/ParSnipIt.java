@@ -1,4 +1,6 @@
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -19,7 +21,7 @@ public class ParSnipIt {
         String evald = eval(line, true);
         System.out.println("evald = " + evald);
 
-        String lastExpr = prefixGetDeepestLast(pre);
+        String lastExpr = evalPrefixGetLastExpr(pre);
         System.out.println("lastExpr = " + lastExpr);
 
         String evaldOnce = evalOneStep(pre, lastExpr);
@@ -28,6 +30,13 @@ public class ParSnipIt {
         String evalCant = evalOneStep("42", "42");
         System.out.println("evalCant = " + evalCant);
 
+        System.out.println("expressionList");
+        List<String> steps = evalExpressionList(pre);
+        System.out.println("steps.size() = " + steps.size());
+        for(String expr:steps){
+            System.out.println("expr = " + expr);
+        }
+        
 //		String tree = prefixToTree(pre);
 //		System.out.println("tree = " + tree);
     }
@@ -63,7 +72,6 @@ public class ParSnipIt {
                 result = left / right;
             }
             return "" + result;
-
         }
         String operand = "(" + operator + " " + leftOperand + " " + rightOperand + ")";
         return operand;
@@ -80,7 +88,7 @@ public class ParSnipIt {
     }
 
     public static String infixToPrefixConvert(String infix, boolean reduce) {
-        Stack<String> operandStack = new Stack<String>();
+        Stack<String> operandStack = new  Stack<String>();
         Stack<String> operatorStack = new Stack<String>();
 
         StringTokenizer tokenizer = new StringTokenizer(infix);
@@ -209,8 +217,31 @@ tree =
         //out+="";
         return out;
     }
+    
+    private static List<String> evalExpressionList(String expression){
+        
+        List<String> evalSteps = new ArrayList();
+        evalSteps.add(expression);
+        String bigExpr = expression;
+        String result="";
+        int count=0;
+        do{
+            String lastExpr = evalPrefixGetLastExpr(bigExpr);
+            result = evalOneStep(bigExpr, lastExpr);
+            bigExpr = result;
+            count++;
+            if(count>5){
+                return evalSteps;
+            }
+        }while( !bigExpr.equalsIgnoreCase(result));
+        
+        System.out.println("count = " + count);
+        System.out.println("result = " + result);
+        
+        return evalSteps;
+    }
 
-    private static String prefixGetDeepestLast(String line) {
+    private static String evalPrefixGetLastExpr(String line) {
         int start = line.lastIndexOf("(");
         System.out.println("start = " + start);
         int end = line.indexOf(")", start) + 1;
