@@ -19,13 +19,17 @@ public class ParSnipIt {
 		String evald = eval(line, true);
 		System.out.println("evald = " + evald);
 
-		String evalOnce = prefixGetDeepestLast(pre);
-		System.out.println("evalOnce = " + evalOnce);
+		String lastExpr = prefixGetDeepestLast(pre);
+		System.out.println("lastExpr = " + lastExpr);
 
-		String evaldOnce = evalOneStep(pre, evalOnce);
+		String evaldOnce = evalOneStep(pre, lastExpr);
+                System.out.println("evaldOnce = " + evaldOnce);
+                
+		String evalCant = evalOneStep("42", "42");
+                System.out.println("evalCant = " + evalCant);
 
-		String tree = prefixToTree(pre);
-		System.out.println("tree = " + tree);
+//		String tree = prefixToTree(pre);
+//		System.out.println("tree = " + tree);
 	}
 
 	public static boolean isOperand(String s) {
@@ -33,8 +37,8 @@ public class ParSnipIt {
 	}
 
 	public static boolean isNumber(String s) {
-		try {
-			Integer.parseInt(s.trim());
+                try {
+                        Integer.parseInt(s.trim());
 		} catch (Exception e) {
 			return false;
 		}
@@ -235,25 +239,40 @@ tree =
 		return "(" + op + " " + left + " " + right + ")";
 	}
 
-	private static String evalOneStep(String pre, String evalOnce) {
-		System.out.println("evalOneStep(String pre, String evalOnce)");
-		System.out.println("pre = " + pre);
-		System.out.println("evalOnce = " + evalOnce);
+	private static String evalOneStep(String wholeExpr, String evalExpr) {
+		System.out.println("evalOneStep(String wholeExpr, String evalExpr)");
+		System.out.println("wholeExpr = " + wholeExpr);
+                // (+ (* 12 13) (* 13 14))
+		System.out.println("evalExpr  = " + evalExpr);
+                // (* 13 14)
+                
+		// replace only last instance of evalExpr
+                // there may be more than one
+		int lastOccur = wholeExpr.lastIndexOf(evalExpr);
 
-		// replace only last instance of evealOnce
-		int lastOccur = pre.lastIndexOf(evalOnce);
+		String before = wholeExpr.substring(0, lastOccur);
+//		System.out.println("before = " + before);
+                // (+ (* 12 13) 
+                int off = lastOccur + evalExpr.length();
+//                System.out.println("off = " + off);
+                // 22
+		String after = wholeExpr.substring( off );
+//		System.out.println("after = " + after);
+                // )
+                
+		String evalExprResult = "" + eval(evalExpr, true);
+//		System.out.println("evalExprResult = " + evalExprResult);
+                // evalExprResult = 14)
+                // remove trailing paren, why is it there?
+                if(evalExprResult.endsWith(")")){
+                    evalExprResult=evalExprResult.substring(0, evalExprResult.length()-1);
+                }
+//		System.out.println("evalExprResult = " + evalExprResult);
 
-		String before = pre.substring(0, lastOccur);
-		System.out.println("before = " + before);
-		String after = pre.substring(lastOccur + pre.length());
-		System.out.println("after = " + after);
-
-		String evalExpr = "" + eval(evalOnce, true);
-		System.out.println("evalExpr = " + evalExpr);
-
-		String result = before + evalExpr + after;
-		System.out.println("result = " + result);
-		return result;
+		String nextExpr = before + evalExprResult + after;
+		System.out.println("nextExpr = " + nextExpr);
+                //nextExpr = (+ (* 12 13) 14)
+		return nextExpr;
 	}
 
 }
