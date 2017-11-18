@@ -1,10 +1,8 @@
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 import java.nio.charset.StandardCharsets;
 
@@ -342,8 +340,9 @@ public class Tab extends javax.swing.JFrame {
 				//System.out.println("saved");
 			}
 
-		} catch (NoSuchAlgorithmException | FileNotFoundException | UnsupportedEncodingException ex) {
-			Logger.getLogger(Tab.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex) {
+			Logger.getLogger(Tab.class.getName())
+                    .log(Level.SEVERE, null, ex);
 		}
 
 		// deal with dependencies
