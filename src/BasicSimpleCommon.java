@@ -571,6 +571,14 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 		res+="]";
 		return res;
 	}
+    public static String array2string(char[] in){
+		String res="[";
+		for(char s:in){
+			res+=s+",";
+		}
+		res+="]";
+		return res;
+	}
 
     private void prefixTable(String prefix) {
         System.out.println("prefixTable(String prefix) prefix = " + prefix);
@@ -578,11 +586,17 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 //		System.out.println("inline = " + inline);
         String tree = ParSnipIt.prefixToTree( prefix );
         System.out.println("tree = " + tree);
+        
+        
+        clearTableCells();
+        
         int deep=0;
         int down=0;
         String buff="";
 		char indent='-';
-        for(char ch:prefix.toCharArray()){
+        char[] chars = tree.toCharArray();
+//        System.out.println("chars = " + array2string(chars));
+        for(char ch:chars){
 //            System.out.println("ch = " + ch);
             if(ch==indent){
                 deep++;
@@ -649,6 +663,16 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
                 = jTextPaneOutput.getHighlighter().getHighlights();
         for(Highlight hili : highlights){
             jTextPaneOutput.getHighlighter().removeHighlight(hili);
+        }
+    }
+
+    private void clearTableCells() {
+        int cols = jTable1.getColumnCount();
+        int rows = jTable1.getRowCount();
+        for( int r=0; r<rows; r++){
+            for( int c=0; c<cols; c++){
+                jTable1.setValueAt(null, r, c);
+            }
         }
     }
 }
