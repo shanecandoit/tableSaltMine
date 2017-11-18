@@ -13,28 +13,29 @@ public class ParSnipIt {
     public static void main(String[] args) {
 
 //        String line = "1 + 2 * A + sin(6)";
-        String line = "12 * 13 + 13 * 14";//=338
+//        String line = "12 * 13 + 13 * 14";//=338
+        String line = "2 * 3 + 4 * 5";//=26
         System.out.println("line = " + line);
         String pre = infixToPrefixConvert(line, false);
         System.out.println("pre = " + pre);
 
-        String evald = eval(line, true);
-        System.out.println("evald = " + evald);
+//        String evald = eval(line, true);
+//        System.out.println("evald = " + evald);
 
-        String lastExpr = evalPrefixGetLastExpr(pre);
-        System.out.println("lastExpr = " + lastExpr);
+//        String lastExpr = evalPrefixGetLastExpr(pre);
+//        System.out.println("lastExpr = " + lastExpr);
 
-        String evaldOnce = evalOneStep(pre, lastExpr);
-        System.out.println("evaldOnce = " + evaldOnce);
+//        String evaldOnce = evalOneStep(pre, lastExpr);
+//        System.out.println("evaldOnce = " + evaldOnce);
 
-        String evalCant = evalOneStep("42", "42");
-        System.out.println("evalCant = " + evalCant);
+//        String evalCant = evalOneStep("42", "42");
+//        System.out.println("evalCant = " + evalCant);
 
         System.out.println("expressionList");
         List<String> steps = evalExpressionList(pre);
-        System.out.println("steps.size() = " + steps.size());
+        System.out.println("-steps.size() = " + steps.size());
         for(String expr:steps){
-            System.out.println("expr = " + expr);
+            System.out.println("-expr = " + expr);
         }
         
 //		String tree = prefixToTree(pre);
@@ -188,7 +189,52 @@ public class ParSnipIt {
         System.out.println("prefixToTree out = " + out);
         return out;
     }
-
+    
+    private static String evalPrefix(String pre){
+        System.out.println("evalPrefix(String pre) pre = "+pre);
+        if(pre.startsWith("(")){
+            pre=pre.substring(1);
+        }
+        System.out.println("evalPrefix(String pre) pre = "+pre);
+        if(pre.endsWith(")")){
+            pre=pre.substring(0,pre.length()-1);
+        }
+        System.out.println("evalPrefix(String pre) pre = "+pre);
+        String fn = pre.split(" ")[0];
+        System.out.println("-fn = "+fn);
+        String lo = pre.split(" ")[1];
+        System.out.println("-lo = "+lo);
+        String ro = pre.split(" ")[2];
+        System.out.println("-ro = "+ro);
+        
+        double res;
+        if(fn.equals("+")){
+            res= Double.parseDouble(lo) + Double.parseDouble(ro);
+        }else if(fn.equals("-")){
+            res= Double.parseDouble(lo) - Double.parseDouble(ro);
+        }else if(fn.equals("*")){
+            res= Double.parseDouble(lo) * Double.parseDouble(ro);
+        }else if(fn.equals("/")){
+            res= Double.parseDouble(lo) / Double.parseDouble(ro);
+        }else if(fn.equals("%")){
+            res= Double.parseDouble(lo) % Double.parseDouble(ro);
+        }else if(fn.equals("^")){
+            res= Math.pow( Double.parseDouble(lo) , Double.parseDouble(ro) );
+        }else {
+            System.out.println("unknown function or operator "+fn);
+            return "999999999999999999999";
+        }
+        
+        //double resDoub = Double.parseDouble( res );
+        int resInt = (int) Math.round(res);
+        if( resInt == res ){
+            System.out.println(" = "+resInt);
+            return ""+resInt;
+        }else{
+            System.out.println(" = "+res);
+            return ""+res;
+        }
+    }
     /*
     
 tree = 
@@ -222,21 +268,46 @@ tree =
         
         List<String> evalSteps = new ArrayList();
         evalSteps.add(expression);
+        
         String bigExpr = expression;
-        String result="";
+        String lastExpr=evalPrefixGetLastExpr(bigExpr);
         int count=0;
-        do{
-            String lastExpr = evalPrefixGetLastExpr(bigExpr);
-            result = evalOneStep(bigExpr, lastExpr);
-            bigExpr = result;
-            count++;
-            if(count>5){
-                return evalSteps;
+        
+        try{
+            while( !bigExpr.equalsIgnoreCase( evalPrefix(lastExpr) ) ){
+                System.out.println("!bigExpr.equalsIgnoreCase(lastExpr) = " + !bigExpr.equalsIgnoreCase(lastExpr));
+                
+                System.out.println("lastExpr = " + lastExpr);
+                
+                // lastExpr resolving to last number, and a result of operation?
+                //(* 4 5) -> 5
+                
+                bigExpr = evalOneStep(bigExpr, lastExpr);
+                System.out.println("bigExpr = " + bigExpr);
+                
+                evalSteps.add( bigExpr );
+                
+                lastExpr = evalPrefixGetLastExpr(bigExpr);
+                
+                count++;
+                if(count>5){
+                    return evalSteps;
+                }
             }
-        }while( !bigExpr.equalsIgnoreCase(result));
+        }catch(Exception e){
+            /*
+            !bigExpr.equalsIgnoreCase(lastExpr) = true
+            start = -1
+            end = 0
+            Exception in thread "main" java.lang.StringIndexOutOfBoundsException: String index out of range: -1
+                at java.lang.String.substring(Unknown Source)
+                at ParSnipIt.evalPrefixGetLastExpr(ParSnipIt.java:253)
+                at ParSnipIt.evalExpressionList(ParSnipIt.java:233)
+                at ParSnipIt.main(ParSnipIt.java:35)
+            */
+        }
         
         System.out.println("count = " + count);
-        System.out.println("result = " + result);
         
         return evalSteps;
     }
@@ -291,8 +362,8 @@ tree =
 //		System.out.println("after = " + after);
         // )
 
-        String evalExprResult = "" + eval(evalExpr, true);
-//		System.out.println("evalExprResult = " + evalExprResult);
+        String evalExprResult = "" + evalPrefix(evalExpr);
+		//System.out.println("---evalExprResult = " + evalExprResult);
         // evalExprResult = 14)
         // remove trailing paren, why is it there?
         if (evalExprResult.endsWith(")")) {
