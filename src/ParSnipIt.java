@@ -264,7 +264,7 @@ tree =
         return out;
     }
     
-    private static List<String> evalExpressionList(String expression){
+    public static List<String> evalExpressionList(String expression){
         
         List<String> evalSteps = new ArrayList();
         evalSteps.add(expression);

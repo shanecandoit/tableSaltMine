@@ -43,7 +43,7 @@
   <SubComponents>
     <Container class="javax.swing.JSplitPane" name="jSplitPane1">
       <Properties>
-        <Property name="dividerLocation" type="int" value="300"/>
+        <Property name="dividerLocation" type="int" value="250"/>
         <Property name="orientation" type="int" value="0"/>
         <Property name="resizeWeight" type="double" value="0.5"/>
       </Properties>
@@ -206,7 +206,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane4" pref="149" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="112" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -297,6 +297,9 @@
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
                 <Component class="javax.swing.JTextPane" name="jTextPaneOutput">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>

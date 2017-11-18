@@ -1,5 +1,7 @@
 
+import java.awt.Color;
 import java.util.ArrayDeque;
+import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -7,6 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.Highlight;
 
 
 /**
@@ -15,6 +20,8 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class BasicSimpleCommon extends javax.swing.JFrame {
 
+    private List<String> steps;
+
 	/**
 	 * Creates new form BasicSimpleCommon
 	 */
@@ -22,12 +29,13 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 		setTitle("Evaluation Map");
 		setupStyle();
 		initComponents();
-		jTextPaneInput.setText("1 + 2 * A + sin(6)");
+		jTextPaneInput.setText("2 * 3 + 4 * 5");
 
 		// setup slider and label
 		jSliderTimeline.setMaximum(10);
 		jSliderTimeline.setValue(0);
 		jLabelTimer.setText("# 0");
+        steps=null;
 	}
 
 	/**
@@ -58,7 +66,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jSplitPane1.setDividerLocation(300);
+        jSplitPane1.setDividerLocation(250);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setResizeWeight(0.5);
 
@@ -227,7 +235,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonPrevious)
                 .addGap(18, 18, 18)
-                .addComponent(jSliderTimeline, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addComponent(jSliderTimeline, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabelTimer, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -247,6 +255,7 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
             .addComponent(jSliderTimeline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        jTextPaneOutput.setEditable(false);
         jScrollPane4.setViewportView(jTextPaneOutput);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -254,18 +263,18 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane4))
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -307,6 +316,15 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 
 		String time = "# "+begin;
 		jLabelTimer.setText(time);
+        
+        // show prefixTable of current step in time
+        if(steps!=null){
+            prefixTable( steps.get(begin) );
+    
+            // highlight line begin
+            clearHighlights();
+            highlightLine(begin);
+        }
     }//GEN-LAST:event_jButtonBeginActionPerformed
 
     private void jButtonPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPreviousActionPerformed
@@ -320,6 +338,15 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 
 			String time = "# "+prev;
 			jLabelTimer.setText(time);
+            
+            // show prefixTable of current step in time
+            if(steps!=null){
+                prefixTable( steps.get(prev) );
+                
+                // highlight line
+                clearHighlights();
+                highlightLine(prev);
+            }
 		}
     }//GEN-LAST:event_jButtonPreviousActionPerformed
 
@@ -333,6 +360,15 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 
 			String time = "# "+next;
 			jLabelTimer.setText(time);
+            
+            // show prefixTable of current step in time
+            if(steps!=null){
+                prefixTable( steps.get(next) );
+                
+                // highlight line 
+                clearHighlights();
+                highlightLine(next);
+            }
 		}
     }//GEN-LAST:event_jButtonNextActionPerformed
 
@@ -344,6 +380,15 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 
 		String time = "# " + end;
 		jLabelTimer.setText(time);
+        
+        // show prefixTable of current step in time
+        if(steps!=null){
+            prefixTable( steps.get(end) );
+            
+            // highlight line
+            clearHighlights();
+            highlightLine(end);
+        }
     }//GEN-LAST:event_jButtonEndActionPerformed
 
 	/**
@@ -389,13 +434,35 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 	private void evaluateText() {
 		
             String input = jTextPaneInput.getText();
+            input=input.trim();
 			System.out.println("input = " + input);
-
-            prefixTable(input);
-
-            String output= evalBasic(input);
-            System.out.println("output = " + output);
+            
+            // get prefixed input
+            String pre = ParSnipIt.infixToPrefixConvert(input, false);
+            
+            // get single-steps evals of prefixed input
+            List<String> steps = ParSnipIt.evalExpressionList(pre);
+            this.steps = steps;
+    
+            // show the eval-steps
+            String output="";
+            for(String step:steps){
+                output+=step+"\n";
+            }
             jTextPaneOutput.setText(output);
+            
+            // setup timeline
+            int stepSize = steps.size();
+            System.out.println("stepSize = " + stepSize);
+            jSliderTimeline.setMaximum( stepSize );
+
+            // show prefixTable of input
+            infixTable(input);
+
+            // output shows steps, not final expression
+//            String output= evalBasic(input);
+//            System.out.println("output = " + output);
+//            jTextPaneOutput.setText(output);
 	}
 
 	// result of applying binary operator op to two operands val1 and val2
@@ -502,15 +569,15 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
     private void prefixTable(String input) {
 
 		String inline = ParSnipIt.infixToPrefixConvert(input, false);
-		System.out.println("inline = " + inline);
+//		System.out.println("inline = " + inline);
         String tree = ParSnipIt.prefixToTree( ParSnipIt.infixToPrefixConvert(input, false) );
-        System.out.println("tree = " + tree);
+//        System.out.println("tree = " + tree);
         int deep=0;
         int down=0;
         String buff="";
 		char indent='-';
         for(char ch:tree.toCharArray()){
-            System.out.println("ch = " + ch);
+//            System.out.println("ch = " + ch);
             if(ch==indent){
                 deep++;
                 buff="";
@@ -522,15 +589,60 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
                 buff="";
             }
             buff+=ch;
-            System.out.println("buff = " + buff);
+//            System.out.println("buff = " + buff);
             if(buff!=null && buff.length()>1 && buff.startsWith("(")){
                 buff=buff.substring(1);
             }
             String put = buff.replaceAll(""+indent, "");
-            System.out.println("put = " + put);
-            System.out.println("down = " + down);
-            System.out.println("deep = " + deep);
+//            System.out.println("put = " + put);
+//            System.out.println("down = " + down);
+//            System.out.println("deep = " + deep);
             jTable1.setValueAt(put, down, deep);
+        }
+    }
+    
+    private void infixTable(String input) {
+        System.out.println("infixTable(String input) = " + input);
+		String prefix = ParSnipIt.infixToPrefixConvert(input, false);
+		System.out.println("prefix = " + prefix);
+        prefixTable(prefix);
+    }
+
+    private static int getLineEndIdx(String text, int lineNo) {
+        int lineEndIdx = 0;
+        for(int i = 1; 
+                i <= lineNo && lineEndIdx + 1 < text.length(); 
+                i++){
+            lineEndIdx = text.indexOf('\n', lineEndIdx + 1) ;
+        }
+        return lineEndIdx;
+    }
+
+    private void highlightLine(int begin) {
+        System.out.println("highlightLine(int begin) begin = " 
+                + begin);
+        try{
+            Highlighter hilit = new DefaultHighlighter();
+            Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+            jTextPaneOutput.setHighlighter(hilit);
+            int start = getLineEndIdx(jTextPaneOutput.getText(), begin);
+            System.out.println("start = " + start);
+            int end = getLineEndIdx(jTextPaneOutput.getText(), begin+1 );
+            System.out.println("end = " + end);
+            hilit.addHighlight(
+                start,
+                end,
+                painter);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void clearHighlights() {
+        Highlighter.Highlight[] highlights 
+                = jTextPaneOutput.getHighlighter().getHighlights();
+        for(Highlight hili : highlights){
+            jTextPaneOutput.getHighlighter().removeHighlight(hili);
         }
     }
 }
