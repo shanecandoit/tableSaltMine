@@ -80,6 +80,12 @@ public class StringSubmarine extends javax.swing.JFrame {
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane2.setResizeWeight(0.5);
 
+        jListFunctionName.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+        jListFunctionName.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "chr(i)", "lcase(s)", "ltrim(s)", "rtrim(s)", "str(n)", "sub(s,i)", "sub(s,i,i2)", "ucase(s)" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
         jListFunctionName.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jListFunctionName.setToolTipText("Function Names");
         jListFunctionName.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -110,7 +116,7 @@ public class StringSubmarine extends javax.swing.JFrame {
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 169, Short.MAX_VALUE)
+                        .addGap(0, 281, Short.MAX_VALUE)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
@@ -196,4 +202,25 @@ public class StringSubmarine extends javax.swing.JFrame {
             Logger.getLogger(StringSubmarine.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+	private class Str{
+		String chr(int i) {
+			return Character.toString ((char) i);
+		}
+		String trim(String in){
+			return in.trim();
+		}
+		String lcase(String in){
+			return in.toLowerCase();
+		}
+		String ucase(String in){
+			return in.toUpperCase();
+		}
+		String str(double in){
+			return String.valueOf(in);
+		}
+		String str(int in){
+			return String.valueOf(in);
+		}
+	}
 }
