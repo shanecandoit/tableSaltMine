@@ -446,8 +446,11 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
     
             // show the eval-steps
             String output="";
+			int i=0;
             for(String step:steps){
-                output+=step+"\n";
+				output += step + "\n";
+				System.out.println(i + " step = " + step);
+				i++;
             }
             jTextPaneOutput.setText(output);
             highlightLine(0);
