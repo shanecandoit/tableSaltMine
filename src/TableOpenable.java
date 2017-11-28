@@ -263,6 +263,10 @@ public class TableOpenable extends JFrame implements ActionListener {
 
 		//getContentPane().add(scrollPane, BorderLayout.CENTER);
 		getTabbedPane().add(scrollPane, "@" + hashOrName);
+
+		// goto the newly created tab, -1 because [1,2] -> [0,1]
+		int newTabLastIndex = getTabbedPane().getTabCount() - 1;
+		getTabbedPane().setSelectedIndex(newTabLastIndex);
 	}
 
 	private void tableListeners(JTable table) {
