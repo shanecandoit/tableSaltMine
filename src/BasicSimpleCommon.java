@@ -620,6 +620,8 @@ public class BasicSimpleCommon extends javax.swing.JFrame {
 //            System.out.println("put = " + put);
 //            System.out.println("down = " + down);
 //            System.out.println("deep = " + deep);
+			put = put.replace("(", "");
+			put = put.replace(")", "");
             jTable1.setValueAt(put, down, deep);
         }
     }
