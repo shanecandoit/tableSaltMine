@@ -2,10 +2,6 @@
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.UIManager;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,10 +10,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.UIManager;
 
 /**
  *
- * @author s137p379
+ * @author shanecandoit
  */
 public class JavascriptToaster extends javax.swing.JFrame {
 
@@ -199,6 +198,11 @@ public class JavascriptToaster extends javax.swing.JFrame {
                 jTextPaneFunctionBodyFocusLost(evt);
             }
         });
+        jTextPaneFunctionBody.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextPaneFunctionBodyKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextPaneFunctionBody);
 
         jTextFieldFunctionArgs.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
@@ -208,6 +212,11 @@ public class JavascriptToaster extends javax.swing.JFrame {
         jLabel4.setText("functionReturnType");
 
         jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel12.setText("function hash:");
 
@@ -409,11 +418,28 @@ public class JavascriptToaster extends javax.swing.JFrame {
     }//GEN-LAST:event_jListFunctionValueChanged
 
     private void jTextPaneFunctionBodyFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextPaneFunctionBodyFocusLost
-        // TODO add your handling code here:
+
 		System.out.println("jTextPaneFunctionBodyFocusLost");
 		String functionBody = jTextPaneFunctionBody.getText();
 		System.out.println("functionBody = " + functionBody);
+		processFunction();
     }//GEN-LAST:event_jTextPaneFunctionBodyFocusLost
+
+    private void jTextPaneFunctionBodyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPaneFunctionBodyKeyReleased
+
+		int code = evt.getKeyCode();
+		if( evt.isControlDown() && code==10 ){
+			System.out.println("<CTRL>+<ENTER>");
+			processFunction();
+		}
+    }//GEN-LAST:event_jTextPaneFunctionBodyKeyReleased
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+		System.out.println("Button -> Test Function");
+		processFunction();
+		
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -815,5 +841,19 @@ public class JavascriptToaster extends javax.swing.JFrame {
 		body = String.join("\n", lines);
 		System.out.println("body2 = " + body);
 		return body;
+	}
+
+	private void processFunction() {
+		System.out.println("processFunction()");
+
+		// get the parts
+		String fname;
+		String fargs;
+		String ftype;
+		String fbody;
+
+		// build it
+
+		// test it
 	}
 }
