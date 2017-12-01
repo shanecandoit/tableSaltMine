@@ -34,9 +34,9 @@ public class JavascriptToaster extends javax.swing.JFrame {
 
 		// for ui
 		//listModules();
-		updateModules();
+		uiUpdateModules();
 		//listFunctions();
-		updateFunctions();
+		uiUpdateFunctions();
 	}
 
 	private void style() {
@@ -189,9 +189,21 @@ public class JavascriptToaster extends javax.swing.JFrame {
 
         jLabel1.setText("functionName");
 
+        jTextFieldFunctionName.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+
         jLabel3.setText("functionBody");
 
+        jTextPaneFunctionBody.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+        jTextPaneFunctionBody.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextPaneFunctionBodyFocusLost(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextPaneFunctionBody);
+
+        jTextFieldFunctionArgs.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+
+        jTextFieldFunctionType.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
 
         jLabel4.setText("functionReturnType");
 
@@ -263,7 +275,7 @@ public class JavascriptToaster extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -392,9 +404,16 @@ public class JavascriptToaster extends javax.swing.JFrame {
 			String function = jListFunction.getSelectedValue();
 			System.out.println(" function = " + function);
 
-			updateChosenFunction(function);
+			uiUpdateChosenFunction(function);
 		}
     }//GEN-LAST:event_jListFunctionValueChanged
+
+    private void jTextPaneFunctionBodyFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextPaneFunctionBodyFocusLost
+        // TODO add your handling code here:
+		System.out.println("jTextPaneFunctionBodyFocusLost");
+		String functionBody = jTextPaneFunctionBody.getText();
+		System.out.println("functionBody = " + functionBody);
+    }//GEN-LAST:event_jTextPaneFunctionBodyFocusLost
 
 	/**
 	 * @param args the command line arguments
@@ -469,21 +488,24 @@ public class JavascriptToaster extends javax.swing.JFrame {
 			Statement stat = conn.createStatement();
 
 			stat.executeUpdate("drop table if exists function;");
-			stat.executeUpdate("create table function (name, args, type);");
+			stat.executeUpdate("create table function (name, args, type, body);");
 			PreparedStatement prep = conn.prepareStatement(
-					"insert into function values (?, ?, ?);");
+					"insert into function values (?, ?, ?, ?);");
 
 			prep.setString(1, "sort");
-			prep.setString(2, "[a]");
-			prep.setString(3, "[a]");
+			prep.setString(2, "list");
+			prep.setString(3, "sortedlist");
+			prep.setString(4, "function sort( list ){ result=list.slice(0); result.sort(); return result; }");
 			prep.addBatch();
 			prep.setString(1, "max");
-			prep.setString(2, "[a]");
-			prep.setString(3, "a");
+			prep.setString(2, "list");
+			prep.setString(3, "elem");
+			prep.setString(4, "function mx(list){ big=list[0]; for( i=0;i<list.length;i++ ){ n=list[i]; console.log('check '+n); if( n>big ){ console.log('new big '+n); big=n; }} return big;}");
 			prep.addBatch();
 			prep.setString(1, "addi");
 			prep.setString(2, "i1, i2");
-			prep.setString(3, "i");
+			prep.setString(3, "i3");
+			prep.setString(4, "function addi(i1, i2){ return i1 + i2;}");
 			prep.addBatch();
 
 			conn.setAutoCommit(false);
@@ -547,6 +569,10 @@ public class JavascriptToaster extends javax.swing.JFrame {
 
 	}
 
+	/**
+	 * a module is a box of related functions create the module table and load
+	 * sample data
+	 */
 	private void initModules() {
 		System.out.println("initModules()");
 		try {
@@ -566,7 +592,7 @@ public class JavascriptToaster extends javax.swing.JFrame {
 		}
 	}
 
-	private void updateModules() {
+	private void uiUpdateModules() {
 		System.out.println("updateModules()");
 		String[] modules = listModules();
 
@@ -597,7 +623,7 @@ public class JavascriptToaster extends javax.swing.JFrame {
 		}
 	}
 
-	private void updateFunctions() {
+	private void uiUpdateFunctions() {
 		System.out.println("updateFunctions()");
 		String[] functions = listFunctionNames();
 
@@ -680,20 +706,20 @@ public class JavascriptToaster extends javax.swing.JFrame {
 		}
 	}
 
-	private void updateChosenFunction(String fName) {
+	private void uiUpdateChosenFunction(String fName) {
 		// what ui needs updated?
 		jTextFieldFunctionName.setText(fName);
-		jTextFieldFunctionArgs.setText(functionArgs(fName));
-		jTextFieldFunctionType.setText(functionType(fName));
-		jTextPaneFunctionBody.setText(functionBody(fName));
+		jTextFieldFunctionArgs.setText(dbFunctionArgs(fName));
+		jTextFieldFunctionType.setText(dbFunctionType(fName));
+		jTextPaneFunctionBody.setText(dbFunctionBody(fName));
 
 		// readonly
-		jTextFieldFunctionHash.setText(functionHash(fName));
-		jTextPaneFunctionDef.setText(functionDef(fName));
+		jTextFieldFunctionHash.setText(dbFunctionHash(fName));
+		jTextPaneFunctionDef.setText(dbFunctionDef(fName));
 
 	}
 
-	private String functionArgs(String functionName) {
+	private String dbFunctionArgs(String functionName) {
 		System.out.println("functionArgs(String functionName) functionName = " + functionName);
 		String args = null;
 		try {
@@ -717,7 +743,7 @@ public class JavascriptToaster extends javax.swing.JFrame {
 		return args;
 	}
 
-	private String functionType(String functionName) {
+	private String dbFunctionType(String functionName) {
 		System.out.println("functionType(String functionName) functionName = " + functionName);
 		String type = null;
 		try {
@@ -741,15 +767,53 @@ public class JavascriptToaster extends javax.swing.JFrame {
 		return type;
 	}
 
-	private String functionBody(String functionName) {
+	private String dbFunctionBody(String functionName) {
+		System.out.println("functionType(String functionName) functionName = " + functionName);
+		String body = null;
+		try {
+			Connection conn = getDb();
+
+			PreparedStatement prep = conn.prepareStatement(
+					"select body from function where name in (?);");
+
+			prep.setString(1, functionName);
+			ResultSet rs = prep.executeQuery();
+			while (rs.next()) {
+				body = rs.getString("body");
+				System.out.println(" body = " + body);
+			}
+			rs.close();
+			conn.close();
+
+		} catch (Exception ex) {
+			Logger.getLogger(JavascriptToaster.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		body = cleanupBody( body );
+
+		return body;
+	}
+
+	private String dbFunctionHash(String functionName) {
 		return null;
 	}
 
-	private String functionHash(String functionName) {
+	private String dbFunctionDef(String functionName) {
 		return null;
 	}
 
-	private String functionDef(String functionName) {
-		return null;
+	private String cleanupBody(String body) {
+		System.out.println("cleanupBody(String body) body = "+body);
+		body = body.replace("{", "{\n");
+		System.out.println("body1 = " + body);
+		String[] lines = body.split("\n");
+		for( String line:lines ){
+			if( !line.contains("for") ){
+				line = line.replace("{", "{\n");
+			}
+		}
+		body = String.join("\n", lines);
+		System.out.println("body2 = " + body);
+		return body;
 	}
 }
