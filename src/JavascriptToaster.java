@@ -85,6 +85,8 @@ public class JavascriptToaster extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         jScrollPane8 = new javax.swing.JScrollPane();
         jTextPaneFunctionDef = new javax.swing.JTextPane();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -125,11 +127,11 @@ public class JavascriptToaster extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jListFunction);
 
-        jLabel5.setText("functions");
+        jLabel5.setText("Functions");
 
         jButton3.setText("add");
 
-        jLabel11.setText("author / module");
+        jLabel11.setText("Module");
 
         jListModule.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -211,23 +213,28 @@ public class JavascriptToaster extends javax.swing.JFrame {
 
         jLabel4.setText("functionReturnType");
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Test");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jLabel12.setText("function hash:");
+        jLabel12.setText("Function Hash:");
 
         jTextFieldFunctionHash.setEditable(false);
-        jTextFieldFunctionHash.setText("jTextField4");
 
         jLabel15.setText("actual function definition (read-only)");
 
         jTextPaneFunctionDef.setEditable(false);
         jTextPaneFunctionDef.setBackground(new java.awt.Color(240, 240, 240));
         jScrollPane8.setViewportView(jTextPaneFunctionDef);
+
+        jButton7.setText("<");
+        jButton7.setToolTipText("previous implementation in treemap");
+
+        jButton8.setText(">");
+        jButton8.setToolTipText("next implementation in treemap");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -236,7 +243,7 @@ public class JavascriptToaster extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
                     .addComponent(jScrollPane8)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,7 +259,12 @@ public class JavascriptToaster extends javax.swing.JFrame {
                             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTextFieldFunctionHash, javax.swing.GroupLayout.Alignment.LEADING))
-                            .addComponent(jButton1))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton8)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -276,7 +288,10 @@ public class JavascriptToaster extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton7)
+                    .addComponent(jButton8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -290,37 +305,37 @@ public class JavascriptToaster extends javax.swing.JFrame {
 
         getContentPane().add(jPanel3);
 
-        jLabel6.setText("test cases");
+        jLabel6.setText("Test Cases");
 
         jList2.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(jList2);
 
-        jLabel7.setText("description");
+        jLabel7.setText("Description (Optional)");
 
         jScrollPane4.setViewportView(jTextPane2);
 
-        jLabel8.setText("test input");
+        jLabel8.setText("Test Input");
 
         jScrollPane5.setViewportView(jTextPane3);
 
-        jLabel9.setText("expected output");
+        jLabel9.setText("Expected Output");
 
         jScrollPane6.setViewportView(jTextPane4);
 
         jLabel10.setText("Result:");
 
-        jButton4.setText("jButton4");
+        jButton4.setText("Publish");
 
-        jLabel13.setText("test suite hash:");
+        jLabel13.setText("Test Suite Hash:");
 
         jTextField5.setEditable(false);
-        jTextField5.setText("jTextField5");
 
-        jLabel19.setText("actual output");
+        jLabel19.setText("Actual Output");
 
         jTextPane7.setEditable(false);
         jTextPane7.setBackground(new java.awt.Color(240, 240, 240));
@@ -351,7 +366,7 @@ public class JavascriptToaster extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel7)
-                                        .addGap(0, 164, Short.MAX_VALUE))
+                                        .addGap(0, 123, Short.MAX_VALUE))
                                     .addComponent(jScrollPane4)))
                             .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
@@ -377,16 +392,16 @@ public class JavascriptToaster extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel19)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
-                .addGap(41, 41, 41)
+                .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel13)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -462,6 +477,8 @@ public class JavascriptToaster extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
